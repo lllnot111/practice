@@ -25,17 +25,17 @@ public class ClientThread extends Thread {
             InputStream is = socket.getInputStream();
 
 
-            for (int i = 0; i < Math.random() % 3; i++) {
+            for (int i = 0; i < 4; i++) {
                 out.println("GET:dog");
                 String str = in.readLine();
                 System.out.println(str);
             }
-            for (int i = 0; i < Math.random() % 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 out.println("GET:cat");
                 String str = in.readLine();
                 System.out.println(str);
             }
-            for (int i = 0; i < Math.random() % 3; i++) {
+            for (int i = 0; i < 2; i++) {
                 out.println("GET:parrot");
                 String str = in.readLine();
                 System.out.println(str);

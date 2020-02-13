@@ -8,10 +8,11 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerThread extends Thread {
 
-    public static ConcurrentHashMap<String, Integer> petMap = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, AtomicInteger> petMap = new ConcurrentHashMap<>();
 
     Socket socket;
 
@@ -29,18 +30,18 @@ public class ServerThread extends Thread {
                 String str = in.readLine();
                 if ("List".equals(str)) {
                     Set set = new HashSet();
-                    int max = 0;
+                    AtomicInteger max = new AtomicInteger(0);
                     String tempPet = "";
                     for (String pet : petMap.keySet()) {
                         for (String petCompare : petMap.keySet()) {
-                            if(max <= petMap.get(petCompare) && !set.contains(petCompare)){
-                                max = petMap.get(petCompare);
+                            if(max.get() <= petMap.get(petCompare).get() && !set.contains(petCompare)){
+                                max.set(petMap.get(petCompare).get());
                                 tempPet = petCompare;
                             }
                         }
                         set.add(tempPet);
-                        out.println(tempPet+":"+max);
-                        max = 0;
+                        out.println(tempPet+":"+max.get());
+                        max.set(0);
                     }
                     out.println("OK");
                 }
@@ -50,10 +51,9 @@ public class ServerThread extends Thread {
                 else if ("GET:".equals(str.substring(0, 4))) {
                     String pet = str.substring(4);
                     if (petMap.containsKey(pet)) {
-                        petMap.put(pet, petMap.get(pet) + 1);
-
+                        petMap.get(pet).incrementAndGet();
                     } else {
-                        petMap.put(pet, 1);
+                        petMap.put(pet, new AtomicInteger(1));
                     }
                     out.println("OK");
                 }
