@@ -50,12 +50,14 @@ public class ServerThread extends Thread {
                 }
                 else if ("GET:".equals(str.substring(0, 4))) {
                     String pet = str.substring(4);
-                    if (petMap.containsKey(pet)) {
-                        petMap.get(pet).incrementAndGet();
-                    } else {
-                        petMap.put(pet, new AtomicInteger(1));
+                    synchronized (ServerThread.class) {
+                        if (petMap.containsKey(pet)) {
+                            petMap.get(pet).incrementAndGet();
+                        } else {
+                            petMap.put(pet, new AtomicInteger(1));
+                        }
+                        out.println("OK");
                     }
-                    out.println("OK");
                 }
             }
             socket.close();
