@@ -17,7 +17,7 @@ public class ClientTest {
         InetAddress address = InetAddress.getByName(null);
         System.out.println("address = " + address);
         List<ClientThread> clientThreads = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             Socket socket = new Socket(address, 9999);
             ClientThread clientThread = new ClientThread(socket);
             clientThread.start();

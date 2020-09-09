@@ -34,30 +34,32 @@ public class ServerThread extends Thread {
                     String tempPet = "";
                     for (String pet : petMap.keySet()) {
                         for (String petCompare : petMap.keySet()) {
-                            if(max.get() <= petMap.get(petCompare).get() && !set.contains(petCompare)){
+                            if (max.get() <= petMap.get(petCompare).get() && !set.contains(petCompare)) {
                                 max.set(petMap.get(petCompare).get());
                                 tempPet = petCompare;
                             }
                         }
                         set.add(tempPet);
-                        out.println(tempPet+":"+max.get());
+                        out.println(tempPet + ":" + max.get());
                         max.set(0);
                     }
                     out.println("OK");
-                }
-                else if ("END".equals(str)) {
+                } else if ("END".equals(str)) {
                     break;
-                }
-                else if ("GET:".equals(str.substring(0, 4))) {
+                } else if ("GET:".equals(str.substring(0, 4))) {
                     String pet = str.substring(4);
-                    synchronized (ServerThread.class) {
-                        if (petMap.containsKey(pet)) {
-                            petMap.get(pet).incrementAndGet();
-                        } else {
-                            petMap.put(pet, new AtomicInteger(1));
+                    if (!petMap.containsKey(pet)) {
+                        synchronized (ServerThread.class) {
+                            if (!petMap.containsKey(pet)) {
+                                petMap.put(pet, new AtomicInteger(1));
+                            } else {
+                                petMap.get(pet).incrementAndGet();
+                            }
                         }
-                        out.println("OK");
+                    } else {
+                        petMap.get(pet).incrementAndGet();
                     }
+                    out.println("OK");
                 }
             }
             socket.close();
